@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-
 #include "date.h"
 
 // A football Game consists of a Date, and two GameScore's, storing
