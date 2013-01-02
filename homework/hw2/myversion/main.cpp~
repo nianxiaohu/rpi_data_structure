@@ -1,0 +1,136 @@
+#include <algorithm>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <cassert>
+
+#include "game.h"
+#include "team.h"
+
+using namespace std;
+// This function reads football game data from a file in a strictly specified format
+
+void read_data(std::vector<Game> &games, std::ifstream &in_str) {
+  std::string weekday, month, visitor_name, host_name;
+  int day, year, v1,v2,v3,v4,v5,vtotal,h1,h2,h3,h4,h5,htotal;
+  while(1)
+    {
+      // read in date
+      if ( !( in_str >> weekday >> month>> day>> year))
+	break;
+      Date date(month,day,year);
+      // read in the scores
+      in_str >> visitor_name >> v1>> v2>> v3>>v4>>v5>>vtotal;
+      in_str>>host_name>>h1>>h2>>h3>>h4>>h5>>htotal;
+      GameScore visitor(visitor_name,v1,v2,v3,v4,v5);
+      GameScore home(host_name,h1,h2,h3,h4,h5);
+      Game game(date,visitor,home);
+      games.push_back(game);
+    }
+}
+// this function makes a list of all the teams that played at least one game, and collects all the games for each team
+void gather_team_stats(const std::vector<Game> &games, std::vector<Team> &teams){
+  for ( unsigned int i=0; i<games.size();i++) {
+    bool HnotFound = true;
+    bool VnotFound = true;
+    std::string hostTeam=games[i].getHomeScore().getName();
+    std::string visitorTeam= games[i].getVisitorScore().getName();
+    unsigned int j;
+    for( j=0;j<teams.size();j++){
+      if ( teams[j].getName()==hostTeam) {
+	HnotFound = false;
+	break;
+      }
+    }
+    if(!HnotFound)
+      {
+	teams[j].addGame(games[i]);
+      }
+    if(HnotFound)
+      {
+	Team t(hostTeam);
+	t.addGame(games[i]);
+	teams.push_back(t);
+      }
+    for( j=0;j<teams.size();j++){
+      if ( teams[j].getName()==visitorTeam) {
+	HnotFound = false;
+	break;
+      }
+    }
+    if(!VnotFound)
+      {
+	teams[j].addGame(games[i]);
+      }
+     if(VnotFound)
+      {
+	Team t(visitorTeam);
+	t.addGame(games[i]);
+	teams.push_back(t);
+      }   
+  }
+}
+
+
+// The main function does the argument parsing and issues commands for loading, sorting, and printing the data
+int main(int argc, char* argv[])
+{
+  // check the number of arguments
+  if ( argc != 3) {
+    std::cerr << "Usage: "<< argv[0] << " <in-file> < out-file>\n";
+    return 1;  
+  }
+  // open and test the input file
+  std::ifstream in_str(argv[1]);
+  if (!in_str) {
+    std::cerr << "Could not open" << argv[1] << " to read\n";
+    return 1;
+  }
+  // open and test the output file
+  std::ofstream out_str(argv[2]);
+  if (!out_str) {
+    std::cerr << "Could not open " << argv[2]<< " to write\n";
+    return 1;
+  }
+  // read in all the data
+  std::vector<Game> games;
+  std::vector<Team> teams;
+  std::vector<Game>::iterator itGame;
+  std::vector<Team>::iterator itTeam;
+  read_data( games, in_str);
+  gather_team_stats(games, teams);
+  std::sort(games.begin(),games.end(),sort_by_differential);
+  // ALl games, sorted by point differential
+  out_str<< "All GAMES, SORTED BY POINT DIFFERENTIAL:"<< std::endl;
+  int max_name_width=0;
+  for ( unsigned int i=0; i<teams.size(); i++)
+    {
+      unsigned int k = teams[i].getName().length();
+      if( k > max_name_width)
+	max_name_width = k;
+    }
+  for ( unsigned int i=0; i<games.size(); i++)
+    {
+      int visitorScore = games[i].getVisitorScore().getTotal();
+      int hostScore = games[i].getHomeScore().getTotal();
+      std::string visitorName = games[i].getVisitorScore().getName();
+      std::string hostName = games[i].getHomeScore().getName();
+      if ( visitorScore > hostScore)
+	{
+	  out_str<< std::setw(max_name_width)<<std::left<< visitorName << " defeated " << std::setw(max_name_width)<<std::left<< hostName << std::setw(2)<< std::left << visitorScore <<" - "<<std::setw(2)<<std::left <<hostScore<<std::endl;
+	}
+      else
+	{
+	  out_str<<std::setw(max_name_width)<<std::left<< visitorName << " lost to  " << std::setw(max_name_width)<<std::left << hostName <<std::setw(2)<<std::left << visitorScore <<" - "<<std::setw(2)<< std::left<< hostScore<<std::endl;
+	}
+    }
+  // all teams, sorted by win percentage
+  out_str<<"\nALL TEAMS, SORTED BY WIN PERCENTAGE:" << std::endl;
+  std::sort(teams.begin(),teams.end(),sort_by_wins);
+  for ( unsigned int i=0;i<teams.size(); i++) {
+    out_str<<std::setw(max_name_width) <<std::left<<teams[i].getName() << std::setw(3)<<std::left << teams[i].getWins() << " win(s) -  "<<std::setw(3)<< std::left << teams[i].getLosses() << " loss(es) "<< std::setw(4)<< std::fixed<<std::setprecision(3)<<teams[i].getWinPercentage() << std::endl; 
+  }
+ return 0;
+  }

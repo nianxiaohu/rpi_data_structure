@@ -1,0 +1,186 @@
+#ifndef _JaggedArray_h_
+#define _JaggedArray_h_
+
+
+
+template <class T>
+class JaggedArray {
+  private:
+  int num_elements;
+  int num_bins;
+  int* offsets;
+  T* packed_values;
+  int* counts;
+  T** unpacked_values;//pitfall 1
+  //private memeber functions
+  void create(int n);
+  void destroy();
+  void copy( const JaggedArray<T>& t);
+  int numElementsInBinFromOffsets( int b ) const;
+
+ public:
+  //constructor
+  JaggedArray();
+  JaggedArray(int i){ this->create(n);}
+  //copy constructor
+  JaggedArray(const JaggedArray& ja) { copy(ja);}
+  //assignment operator
+  JaggedArray& operator=( const JaggedArray& ja);
+  //destructor
+  ~JaggedArray() {destroy();}
+  //accessor
+  int numBins() const { return num_bins;}
+  int numElements() const { return num_elements;}
+  int numElementsInBin(const int& i) const;
+  T& getElement(const int& i, const int& j) const;
+  bool isPacked() const;
+
+  //modifiers
+  void addElement(int b, const T& v);
+  void removeElement( int b, int i);
+  void clear();
+  //output
+  void print();
+  int maxEntryWidth() const;
+  //switch presentation
+  void pack();
+  void unpack();
+
+};
+
+template <class T> void JaggedArray<T>::create(int n) {
+  num_bins = n;
+  num_elements = 0;
+  // starts out as unpacked
+  offsets = NULL;
+  packed_values = NULL;
+  unpacked_values = new T*[n];
+  counts = new int[n];
+  for( unsigned int i=0;i<n;i++)
+    {
+      counts[i]=0;
+      unpacked_values[i] = NULL;
+    }
+}
+
+}
+template <class T> void JaggedArray<T>::destroy() {
+  // for offsets and counts and packed_values
+  delete [] offsets;
+  delete [] counts;
+  delete [] packed_values;
+  //for unpacked_values
+  if (!isPacked())
+    {
+      //      assert(packed_values == NULL);
+      //   assert(offsets == NULL);
+      //   assert(unpacked_values !=NULL);
+      for ( unsigned int i=0;i<num_bins;i++)
+	delete [] unpacked_values[i];
+      delete [] unpacked_values;
+    }
+}
+template <class T> void JaggedArray<T>::copy(const JaggedArray<T> &t) {
+  // determine whether t is packed or unpacked then clean this object and deep copy
+  //copy constructor is to create a new oject with existing object
+  // for copy constructor there is no need to see if it is being initialized from itself and there is no need to clean up( delete) an existing value, because there is none. A reference to itself is not returned.
+  num_elements = t.numElements();
+  num_bins = t.numBins();
+  if ( t.isPacked())
+    {
+      offsets = new int[num_bins];
+      packed_values = new T[num_elements];
+      for ( unsigned int i=0; i<num_elements;i++)
+	packed_values[i]=t.packed_values[i];
+      for ( unsigned int j=0; j<num_bins;j++)
+	offsets[j]=t.offsets[j];
+      counts = NULL;
+      unpacked_values = NULL;
+    }
+  else
+    {
+      counts = new int[num_bins];
+      unpacked_values = new T*[num_bins];
+      offsets = NULL;
+      packed_values = NULL;
+      for ( unsigned int i=0; i<num_bins;i++)
+	{
+	  // counts[i]=t.numElementsInBin(i);
+	  counts[i]=t.counts[i];
+	  if (counts[i] == 0)
+	    unpacked_values[i]=NULL;
+	  else
+	    {
+	    unpacked_values[i]= new T[counts[i]];
+	    for ( unsigned int j=0;j<counts[i];j++)
+	      {
+		//addElement(i,t.getElement(i,j));
+		unpacked_values[i][j] = t.unpacked_values[i][j];
+	      }
+	    }
+	}
+    }
+}
+// assignment operator
+template <class T> JaggedArray<T>& JaggedArray<T>::operator=( const JaggedArray<T> &ja) {
+  // check self-assignment
+  if( this != &ja){
+    destroy();
+    this->copy(v);
+  }
+  return *this;
+}
+
+
+// accessor
+  template <class T> bool JaggedArray<T>::isPacked() const {
+    if ( counts == NULL)
+      return true;
+    else
+      return false;
+  }
+  template <class T> int JaggedArray<T>::numElementsInBin( const int& i) const {
+    if ( i<0 || b>=num_bins) {
+      std::cerr << "ERROR: invalid bin index"<< std::endl;
+      exit(1);
+    }
+    if ( isPacked())
+      {
+	assert(offsets!=NULL);
+	if ( i==num_bins-1)
+	  return num_elements-offsets[i];
+	else
+	  return offsets[i+1]-offsets[i];
+      }
+    else
+      {
+	assert(counts !=NULL);
+	return counts[i];
+      }
+  }
+template <class T> T& JaggedArray<T>::getElement(const int &i, const int &j) {
+  if (i<0||i>=num_bins) {
+    std::cerr <<"ERROR: Invalid bin index" << std::endl;
+    exit(1);
+  }
+  if ( j<0 || j >= numElementsInBin(i)) {
+    std::cerr << "ERROR: invalid element index" << std::endl;
+    exit(1);
+  }
+  if ( isPacked())
+    {
+      /* unsigned sumToi=0;
+      for ( unsigned int b=0;b<i;b++)
+	{
+	  sumToi+=numElementsInBin(b);
+	}
+      return packed_values[sumToi+j];
+      */
+return 
+    }
+  else
+    {
+      assert(unpacked_values !=NULL);
+      return unpacked_values[i][j];
+    }
+}

@@ -1,0 +1,19 @@
+All GAMES, SORTED BY POINT DIFFERENTIAL:
+Bills    defeated Dolphins17 - 14
+Dolphins defeated Jets    10 - 6 
+Dolphins defeated Bills   15 - 10
+Jets     defeated Dolphins31 - 23
+Bills    lost to  Patriots30 - 38
+Patriots lost to  Jets    14 - 28
+Jets     defeated Bills   38 - 14
+Patriots defeated Dolphins41 - 14
+Bills    lost to  Jets    7  - 38
+Dolphins lost to  Patriots7  - 38
+Patriots defeated Bills   34 - 3 
+Jets     lost to  Patriots3  - 45
+
+ALL TEAMS, SORTED BY WIN PERCENTAGE:
+Patriots5   win(s) -  1   loss(es) 0.833
+Jets    4   win(s) -  2   loss(es) 0.667
+Dolphins2   win(s) -  4   loss(es) 0.333
+Bills   1   win(s) -  5   loss(es) 0.167
