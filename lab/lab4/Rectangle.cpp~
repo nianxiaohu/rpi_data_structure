@@ -13,8 +13,10 @@ Rectangle::is_point_within( Point2D p )
     ( p.x() >= m_lower_left.x() && p.y() >= m_lower_left.y() );
 }
 bool add_point( Point2D const &p) {
-if(is_point_within(p))
-return m_points_contained.push_back(p);
+if(is_point_within(p)){
+m_points_contained.push_back(p);
+return true;
+}
 else
 return false;
 }

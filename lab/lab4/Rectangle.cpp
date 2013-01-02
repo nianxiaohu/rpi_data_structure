@@ -1,6 +1,7 @@
 
 #include "Rectangle.h"
-
+#include <vector>
+#include < algorithm>
 Rectangle::Rectangle( Point2D lower_left, Point2D upper_right )
   : m_lower_left(lower_left), m_upper_right(upper_right)
 { }
@@ -14,8 +15,11 @@ Rectangle::is_point_within( Point2D p )
 }
 bool add_point( Point2D const &p) {
 if(is_point_within(p)){
-m_points_contained.push_back(p);
-return true;
+  if( std::find(m_points_contained.begin(),m_points_contained.end(),p)!=m_points_contained.back()){
+    m_points_contained.push_back(p);
+    return true;
+  }
+  else return false;
 }
 else
 return false;
@@ -29,9 +33,14 @@ vector<Point2D> points_in_both( Rectangle const& r1, Rectangle const& r2 )
   //  are references to the vectors of points, but since they are
   //  constants neither the vectors nor the points within them can be
   //  changed.
-  const vector<Point2d> & r1_points = r1.points_contained();
-  const vector<Point2d> & r2_points = r2.points_contained();
-
+  const vector<Point2D> & r1_points = r1.points_contained();
+  const vector<Point2D> & r2_points = r2.points_contained();
+  vector<Point2D> pointsB;
+  for ( unsigned int i = 0; i<r1_points.size(); i++) {
+    for ( unsigned int j =0; j<r2_points.size(); j++){
+    
+}  
+}
 
 }
 
