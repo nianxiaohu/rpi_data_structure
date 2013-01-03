@@ -1,7 +1,8 @@
 
 #include "Rectangle.h"
 #include <vector>
-#include < algorithm>
+#include <algorithm>
+
 Rectangle::Rectangle( Point2D lower_left, Point2D upper_right )
   : m_lower_left(lower_left), m_upper_right(upper_right)
 { }
@@ -38,12 +39,12 @@ vector<Point2D> points_in_both( Rectangle const& r1, Rectangle const& r2 )
   vector<Point2D> pointsB;
   for ( unsigned int i = 0; i<r1_points.size(); i++) {
     for ( unsigned int j =0; j<r2_points.size(); j++){
-    
-}  
+      if( std::find(r2_points.begin(),r2_points.end(),r1_points[i]) != r2_points.back())
+	pointsB.push_back(r1_points[i]);
+    }
+  }
+  return pointsB;
 }
-
-}
-
 
 void print_rectangle( Rectangle const& r1 )
 {
