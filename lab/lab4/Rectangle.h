@@ -3,11 +3,9 @@
 #define Rectangle_h_
 
 #include <vector>
-using namespace std;
-
 #include "Point2D.h"
-
-class Rectangle {
+using namespace std;
+class Rectangle{
  public:
   //  Constructor based on the corners of the rectangle.
   Rectangle( Point2D const& lower_left, Point2D const& upper_right );
