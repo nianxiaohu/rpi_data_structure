@@ -26,7 +26,44 @@ void push_back(Node* &head, int v) {
     temp->ptr->ptr = NULL;  
   }
 }
+// remove element v from list
+void remove(Node* &head, int v) {
+  if ( head==NULL)
+    {
+      cout <<"ERROR: cannot remove anything from an empty list" << endl;
+      return;
+    }
+  else
+    {
+      Node* temp;
+      // temp3 is used to save the pointer one node before the temp
+      Node* temp3 = NULL;
+      for(temp = head;temp !=NULL; temp3 = temp, temp = temp->ptr) {
+	if( temp->value == v)
+	  {
+	    if(temp == head)
+	      {
+		Node* temp2 = temp->ptr;
+		delete temp;
+		head = temp2;
+		return;
+	      }
+	    if( temp == head->ptr)
+	      {
+		Node* temp2 = temp->ptr;
+		delete temp;
+		head->ptr = temp2;
+		return;
+	      }
+	    temp3->ptr = temp->ptr;
+	    delete temp;
+	    return;
+	  }
+      }
+    }
+  cout<<v<<" is not in list, so it can't be removed "<<endl;
 
+}
 
 // print out the contents of the list
 void print(Node* &head) {
@@ -53,6 +90,18 @@ int main() {
   push_back(lst,16);
   push_back(lst,17);
   push_back(lst,18);
+  print(lst);
+  remove(lst,10);
+  print(lst);
+  remove(lst,11);
+  print(lst);
+  remove(lst,13);
+  print(lst);
+  remove(lst,18);
+  print(lst);
+  remove(lst,16);
+  print(lst);
+  remove(lst,0);
   print(lst);
 
 }
