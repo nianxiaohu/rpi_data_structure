@@ -4,14 +4,26 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "school.h"
-#include "student.h"
+#include "School.h"
+#include "Student.h"
+
+using namespace std;
 
 // ==========================================================================================
 // IMPORTANT: Carefully read this file, but do not make any changes to
 //            the code, except to fill in code where indicated, and 
 //            (optionally) add appropriate error messages.
 // ==========================================================================================
+
+bool alpha_by_school_name(const School &school1, const School &school2)
+{
+  return school1.GetName() < school2.GetName();
+}
+
+bool alpha_by_student_name(const Student &student1, const Student &student2)
+{
+  return student1.GetName() < student2.GetName();
+}
 
 // read the data for a school & add to the schools list
 void AddSchool(std::istream &istr, std::list<School> &schools) {
@@ -52,10 +64,16 @@ void InsertStudentIntoSchoolPreferenceList(std::istream &istr, std::list<School>
   std::string new_student_name, school_name, insert_before_student_name;
   istr >> school_name >> new_student_name >> insert_before_student_name;
 
-  //
-  // FILL IN THIS FUNCTION
-  //
+  list<School>::iterator it;
+  for (it = schools.begin(); it->GetName() != school_name; it++)
+    if (it == schools.end()) // did not find school to insert the student
+      break;
 
+  // make sure we found the name to delete
+  assert(it != schools.end());
+
+  // add student into the list
+  it->AddStudent(new_student_name, insert_before_student_name);
 }
 
 // read data and remove a particular school from a student's preference list
@@ -63,10 +81,16 @@ void RemoveSchoolFromStudentPreferenceList(std::istream &istr, std::list<Student
   std::string school_name, student_name;
   istr >> student_name >> school_name;
 
-  //
-  // FILL IN THIS FUNCTION
-  //
+  list<Student>::iterator it;
+  for (it = students.begin(); it->GetName() != student_name; it++)
+    if (it == students.end()) // did not find the student name to remove
+      break;
 
+  // make sure we found the name to delete
+  assert(it != students.end());
+
+  // remove the student from the school's preference list
+  it->RemoveSchool(school_name);
 }
 
 // ==========================================================================================
@@ -145,21 +169,30 @@ void PrintSchoolPreferenceList(std::istream &istr, const std::list<School> &scho
   std::string school_name;
   istr >> school_name;
 
-  //
-  // FILL IN THIS FUNCTION
-  //
+  std::list<School>::const_iterator it;
+  for (it = schools.begin(); it->GetName() != school_name; it++)
+    if (it == schools.end()) // did not find the student name to remove
+      break;
 
+  // ensure we found the school
+  assert(it != schools.end());
+
+  // print school's enrollment (HIGHLY SUSPICIOUS)
+  it->PrintSchoolPreference(ostr);
 }
 
 // Print a ranking of schools by a particular student
 void PrintStudentPreferenceList(std::istream &istr, const std::list<Student> &students, std::ostream &ostr) {
   std::string student_name;
   istr >> student_name;
+  std::list<Student>::const_iterator it;
+  for (it = students.begin(); it->GetName() != student_name; it++)
+    if (it == students.end()) 
+      break;
 
-  // 
-  // FILL IN THIS FUNCTION
-  //
+  assert(it != students.end());
 
+  it->PrintStudentPreference(ostr);
 }
 
 // Print the list of all schools (sorted alphabetically) and the students enrolled (also alphabetically)

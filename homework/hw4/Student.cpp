@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -65,6 +66,14 @@ bool Student::IsOfferTentativelyAccepted(const string &school_name) {
   }
 }
 
-void Student::PrintStudentDecision( ofstream &ostr ) {
+void Student::PrintStudentDecision( ostream &ostr ) const {
   ostr << name << " will be attending " << decided_school << endl;
+}
+
+void Student::PrintStudentPreference(ostream &ostr) const {
+  ostr << name << " preference list:" << endl;
+  int i = 1;
+  list<string>::iterator it;
+  for ( it = preferred_schools.begin(); it != preferred_schools.end(); it++, i++ )
+    ostr << setw(2) << right << i << ". " << *it << endl;
 }

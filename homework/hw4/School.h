@@ -21,21 +21,20 @@ class School {
         void AddStudent(const string &student_name) { preferred_students.push_back(student_name); }
         void AddStudent(const string &student_name, const string &before_this_student);
         void PrepareToMakeOffers();
-
         // Gale-Shapely stuff
         const string& MakeNextOffer();
         void StudentTentativelyAcceptsOffer(const string &student);
         void StudentDeclinesTentativeAcceptance(const string &student);
 
-        void PrintSchoolEnrollment(ofstream &ostr);
-
+        void PrintSchoolEnrollment(ostream &ostr) const;
+	void PrintSchoolPreference(ostream &ostr) const;
     private:
         string name;
         int num_slots;
         list<string> preferred_students;
         list<string>::iterator offer_itr;
 	list<string> accepted_students;
-};
+
 
 bool operator==(const School &school1, const School &school2);
 

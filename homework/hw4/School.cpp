@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <list>
-#include <iostream>
+#include <iomanip>
 #include <fstream>
 
 using namespace std;
@@ -22,6 +22,7 @@ void School::PrepareToMakeOffers() {
   // point offer iterator to beginning of preferred students
   offer_itr = preferred_students.begin();
 }
+
 
 const string& School::MakeNextOffer() {
   // return the empty string if we are at the end of the list
@@ -49,11 +50,19 @@ void School::StudentDeclinesTentativeAcceptance(const string &student) {
   accepted_students.erase(it);
 }
 
-void School::PrintSchoolEnrollment(ofstream &ostr) {
+void School::PrintSchoolEnrollment(ostream &ostr) const {
   ostr << "student(s) who will be attending " << name << ":" << endl;
   list<string>::iterator it;
   for ( it = accepted_students.begin(); it != accepted_students.end(); it++ )
     ostr << "  " << *it << endl;
+}
+void School::PrintSchoolPreference(ostream &ostr) const {
+  ostr << name << " preference list:" << endl;
+  int i = 1;
+  list<string>::iterator it;
+  for ( it = preferred_students.begin(); it != preferred_students.end(); it++, i++ ) {
+    ostr << setw(2) << right << i << ". "<< *it << endl;
+  }
 }
 
 bool operator==(const School &school1, const School &school2) {

@@ -24,7 +24,9 @@ class Student {
       void PrepareToReceiveOffers();
       const string& GetBestOffer() const { return decided_school; }
       bool IsOfferTentativelyAccepted(const string &school_name);
-      void PrintStudentDecision(ofstream &ostr);
+
+      void PrintStudentDecision(ostream &ostr) const;
+      void PrintStudentPreference(ostream &ostr) const;
 
    private:
       string name;
