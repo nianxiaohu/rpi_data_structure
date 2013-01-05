@@ -156,7 +156,7 @@ void PrintStudentPreferenceList(std::istream &istr, const std::list<Student> &st
   std::string student_name;
   istr >> student_name;
 
-  //
+  // 
   // FILL IN THIS FUNCTION
   //
 

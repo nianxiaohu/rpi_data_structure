@@ -24,6 +24,10 @@ void School::PrepareToMakeOffers() {
 }
 
 const string& School::MakeNextOffer() {
+  // return the empty string if we are at the end of the list
+  if (offer_itr == preferred_students.end())
+    return "";
+
   // return the name of student we are currently making the offer to and increment the offer iterator
   return *offer_itr++;
 }
