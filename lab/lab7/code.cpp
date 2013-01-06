@@ -37,7 +37,7 @@ int main() {
   // CHECKPOINT 2
 
 
-  /*
+  
   // USING STL LIST
   std::list<int> b;
   for (int i = 0; i < 5; i++) {
@@ -69,7 +69,7 @@ int main() {
     cout << " " << *itr3;
   }
   cout << endl;
-  */
+  
 
 
   return 0;

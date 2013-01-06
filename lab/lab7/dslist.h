@@ -52,10 +52,18 @@ public:
     return temp;
   }
   list_iterator<T> & operator--() {
+    if ( ptr_->next_ == NULL ) {
+      ptr_->next_ = ptr_;
+      return *this;
+    }
     ptr_ = ptr_->prev_;
     return *this;
   }
   list_iterator<T> operator--(int) {
+    if ( ptr_->next_ == NULL ) {
+      ptr_->next_ = ptr_;
+      return *this;
+    }
     list_iterator<T> temp(*this);
     ptr_ = ptr_->prev_;
     return temp;
@@ -104,7 +112,7 @@ public:
   iterator erase(iterator itr);
   iterator insert(iterator itr, T const& v);
   iterator begin() { return iterator(head_); }
-  iterator end() { return iterator(NULL); }
+  iterator end() { return iterator(tail_); }
 
 private:
   void copy_list(dslist<T> const & old);
@@ -147,30 +155,58 @@ void dslist<T>::push_back(const T& v) {
 
 template <class T> 
 void dslist<T>::push_front(const T& v) {
-
-
-
-
+  Node<T>* newp = new Node<T>( v );
+  // special case: initially empty list
+  if (!tail_) {
+    head_ = tail_ = newp;
+  }
+  // normal case : at least one node already
+  else {
+    head_->prev_ = newp;
+    newp->next_ = head_;
+    head_ = newp;
+  }
+  ++size_;
 }
 
 
 template <class T> 
 void dslist<T>::pop_back() {
-
-
-
-
-
+  // special case: there is no node in the list
+  assert( size_ > 0);
+  // special case: there is only one node in the list
+  if ( size_ == 1 ) {
+    delete head_;
+    head_ = NULL;
+    tail_ = NULL;
+  }
+  else {
+    Node<T>* temp = tail_->prev_;
+    tail_->prev_->next_ = NULL;
+    delete tail_;
+    tail_ = temp;
+  }
+  --size_;
 }
 
 
 template <class T> 
 void dslist<T>::pop_front() {
-
-
-
-
-
+  // specail case: there is no node in the list
+  assert ( size_ > 0);
+  // specail case there is only one node in the list
+  if ( size_ == 1 ) {
+    delete head_;
+    head_ = NULL;
+    tail_ = NULL;
+  }
+  else {
+    Node<T>* temp = head_->next_;
+    head_->next_->prev_ = NULL;
+    delete head_;
+    head_ = temp;
+  }
+  --size_;
 }
 
 
@@ -198,7 +234,7 @@ typename dslist<T>::iterator dslist<T>::erase(iterator itr) {
     itr.ptr_ -> prev_ -> next_ = itr.ptr_ -> next_;
     itr.ptr_ -> next_ -> prev_ = itr.ptr_ -> prev_;
   }
-  delete itr.ptr_;
+  delete itr.ptr_;// iterator class is list class's friend, so list class can directly use any private memeber of iterator class
   return result;
 }
 
@@ -246,15 +282,16 @@ void dslist<T>::copy_list(dslist<T> const & old) {
 
 template <class T> 
 void dslist<T>::destroy_list() {
-
-
-
-
-
-
-
-
-
+  iterator it(head_);
+  while( it.ptr_ != tail_) {
+    iterator temp = it;
+    it++;
+    delete temp.ptr_;
+  }
+  delete it.ptr_;
+  size_ = 0;
+  head_ = NULL;
+  tail_ = NULL;
 }
 
 
