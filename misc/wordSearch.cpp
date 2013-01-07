@@ -5,15 +5,15 @@
    Purpose: A program to solve the word search problem where the
    letters in the word do not need to appear along a straight
    line. Instead, they can twist and turn. The only requirements are
-two-fold: the consecutive letters must be "8-connected" to each
-other (meaning that the locations must touch along an edge or at a
-corner), and no location may be used more than once.
-The real issue is how to search for the letters and then record
-locations as we search. This is most easily done with a recursive
-function. This function will be written during lecture.
-The input is from an input file. The grid is a series of strings,
-ended by a string that begins with ’-’. Each subsequent string in
-the file is used to search the input.
+   two-fold: the consecutive letters must be "8-connected" to each
+   other (meaning that the locations must touch along an edge or at a
+   corner), and no location may be used more than once.
+   The real issue is how to search for the letters and then record
+   locations as we search. This is most easily done with a recursive
+   function. This function will be written during lecture.
+   The input is from an input file. The grid is a series of strings,
+   ended by a string that begins with ’-’. Each subsequent string in
+   the file is used to search the input.
 */
 #include <algorithm>
 #include <fstream>
@@ -60,17 +60,17 @@ int main(int argc, char* argv[]) {
        to check if the rest of the word is there.
     */
     for (unsigned int r=0; r<board.size() && !found; ++r)
-  for (unsigned int c=0; c<board[r].size() && !found; ++c) {
-    if (board[r][c] == word[0] &&
-	search_from_loc(loc(r,c), board, word, path))
-      found = true;
-  }
-// Output results
+      for (unsigned int c=0; c<board[r].size() && !found; ++c) {
+	if (board[r][c] == word[0] &&
+	    search_from_loc(loc(r,c), board, word, path))
+	  found = true;
+      }
+    // Output results
     cout << "\n** " << word << " ** ";
     if (found) {
       cout << "was found. The path is \n";
       for(unsigned int i=0; i<path.size(); ++i)
-     cout << " " << word[i] << ": (" << path[i].row << "," << path[i].col << ")\n";
+	cout << " " << word[i] << ": (" << path[i].row << "," << path[i].col << ")\n";
     } else {
       cout << " was not found\n";
     }
@@ -88,5 +88,6 @@ bool search_from_loc(loc position, // current position
 		     const string& word,
 		     vector<loc>& path) // path up to the current pos
 {
+  
   
 }

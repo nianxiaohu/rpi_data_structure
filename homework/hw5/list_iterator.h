@@ -94,7 +94,7 @@ class list_iterator {
     friend bool operator==(const list_iterator<T>& l, const list_iterator<T>& r)
       { return l.ptr_ == r.ptr_ && l.type_ == r.type_; }
     friend bool operator!=(const list_iterator<T>& l, const list_iterator<T>& r)
-      { return l.ptr_ != r.ptr_ || l.type_ != r.type; }
+      { return l.ptr_ != r.ptr_ || l.type_ != r.type_; }
 
   private:
     // -- REPRESENTATION -- \\

@@ -269,35 +269,23 @@ void MultiLL<T>::copy_list(MultiLL<T> const & old) {
 }
 
 
-
-
-
-
-
-
-
-
 template <class T> 
 void MultiLL<T>::destroy_list() {
 
   if (size_ == 0) { // special case: empty list
     return; // do nothing
   }
-
   // there's at least one node in the list
-  Node<T> *present, *next_node;
-  for (present = chrono_head_, next_node = chrono_head_->next_; next_node != NULL; present = next_node, next_node = next_node->chrono_next_)
+  Node<T> *present, *temp;
+  present = chrono_head_;
+  // since you know the size, it is just nicer to do it like this way
+  for ( unsigned int i = 0; i < size_; i++ ) {
+    temp = present->chrono_next_;
     delete present;
-
-  /* We will still be pointing at the last node when `next_node' is NULL, so we 
-   * still have to delete the present node. */
-  delete present;
-
-  // point all heads and tails to NULL
-  chrono_head_ = chrono_tail_ = sorted_head_ = sorted_tail_ = random_head_ = NULL;
-
-  // empty list
-  size_ = 0;
+    present = temp;
+  }
+    chrono_head_ = chrono_tail_ = sorted_head_ = sorted_tail_ = random_head_ = NULL;
+    size_ = 0;
 }
 
 #endif
