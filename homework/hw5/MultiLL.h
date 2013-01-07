@@ -118,7 +118,7 @@ typename MultiLL<T>::iterator MultiLL<T>::erase(iterator itr) {
       itr.ptr_ -> chrono_next_ -> chrono_prev_ = itr.ptr_ -> chrono_prev_;
     */
     
-    Node<T> *present, next;
+    Node<T> *present, *next;
     present = random_head_;
     next = present->random_next_;  
     for ( ; next != itr.ptr_; present = next, next = next->random_next_)
@@ -131,7 +131,7 @@ typename MultiLL<T>::iterator MultiLL<T>::erase(iterator itr) {
 
 template <class T>
 void MultiLL<T>::add(const T &value) {
-  Node<T>* node = new Node(v);
+  Node<T>* node = new Node<T>(value);
   if ( size_ == 0 ) {
     chrono_head_ = node;
     chrono_tail_ = node;
@@ -143,7 +143,7 @@ void MultiLL<T>::add(const T &value) {
   } else {
     // arranage the chrono pointer for the new node
     chrono_tail_->chrono_next_ = node;
-    node->chrono_prev_ = chrono_tail;
+    node->chrono_prev_ = chrono_tail_;
     chrono_tail_ = node;
 
     
@@ -176,7 +176,7 @@ void MultiLL<T>::add(const T &value) {
     if ( value < sorted_head_->value_) {
       // we are inserting the node at the beginning of the sorted list
       sorted_head_->sorted_prev_ = node;
-      node->sorted_next_ = sorted_head;
+      node->sorted_next_ = sorted_head_;
       // fix the sorted head to point to the new node
       sorted_head_ = node;
       return;
@@ -218,24 +218,53 @@ typename MultiLL<T>::iterator MultiLL<T>::insert(iterator itr, T const& v) {
 template <class T> 
 void MultiLL<T>::copy_list(MultiLL<T> const & old) {
   size_ = old.size_;
+
+
   // Handle the special case of an empty list.
-  if (size_ == NULL) {
+  if (size_ == 0) {
     chrono_head_ = chrono_tail_ = sorted_head_ = sorted_tail_ = random_head_ = NULL;
     return;
   }
-  // Create a new head node. 
-  head_ = new Node<T>(old.head_ -> value_);
-  // tail_ will point to the last node created and therefore will move
-  // down the new list as it is built
-  tail_ = head_;
-  // old_p will point to the next node to be copied in the old list
-  Node<T>* old_p = old.head_ -> next_;
+  int i=0;
+  chrono_head_ = new Node<T>(old.chrono_head_ -> value_);
+  // check if random_head_ or sorted_head_ or sorted_tail_ points to the same chrono_head_ 
+  if (old.random_head_ == old.chrono_head_) {
+    random_head_ = chrono_head_;
+    i++;
+  }
+  if (old.sorted_tail_ == old.chrono_head_) {
+    sorted_tail_ = chrono_head_;
+    i++;
+  }
+  if (old.sorted_head_ == old.chrono_head_) {
+    sorted_head_ = chrono_head_;
+    i++;
+  }  
+  chrono_tail_ = chrono_head_;
+  // copy the sorted_next_ and sorted_prev_ and random_next_
+
+  Node<T>* old_p = old.chrono_head_ -> chrono_next_;
   // copy the remainder of the old list, one node at a time
   while (old_p) {
-    tail_ -> next_ = new Node<T>(old_p -> value_);
-    tail_ -> next_ -> prev_ = tail_;
-    tail_ = tail_ -> next_;
-    old_p = old_p -> next_;
+    Node<T>* temp = new Node<T>(old_p -> value_);
+    chrono_tail_ -> chrono_next_ = temp;
+    if(i != 3) {
+      if (old.random_head_ == old_p) {
+	random_head_ = temp;
+	i++;
+      }
+      if (old.sorted_tail_ == old_p) {
+	sorted_tail_ = temp;
+	i++;
+      }
+      if (old.sorted_head_ == old_p) {
+	sorted_head_ = temp;
+	i++;
+      }  
+    }
+    temp -> chrono_prev_ = chrono_tail_;
+    chrono_tail_ = temp;
+    old_p = old_p -> chrono_next_;
   }
 }
 

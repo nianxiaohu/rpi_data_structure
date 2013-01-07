@@ -81,7 +81,6 @@ class list_iterator {
 
       // save the current iterator so we can return it later
       list_iterator<T> temp(*this);
-
       if (type_ == chrono_)
         ptr_ = ptr_->chrono_prev_; 
       else // type_ == sorted_
