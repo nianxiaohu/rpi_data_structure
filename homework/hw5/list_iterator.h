@@ -77,15 +77,14 @@ class list_iterator {
     list_iterator<T> operator--(int) { // iterator--
       
       // we can only decrement chronological and sorted iterators
-      assert(type_ == chrono_ || type_ == sorted_)
-
+      assert(type_ == chrono_ || type_ == sorted_);
       // save the current iterator so we can return it later
       list_iterator<T> temp(*this);
       if (type_ == chrono_)
         ptr_ = ptr_->chrono_prev_; 
       else // type_ == sorted_
         ptr_ = ptr_->sorted_prev_;
-
+      
       return temp;
     }
 
