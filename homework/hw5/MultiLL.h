@@ -269,6 +269,14 @@ void MultiLL<T>::copy_list(MultiLL<T> const & old) {
 }
 
 
+
+
+
+
+
+
+
+
 template <class T> 
 void MultiLL<T>::destroy_list() {
 
