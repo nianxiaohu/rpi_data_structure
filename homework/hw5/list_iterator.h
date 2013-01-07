@@ -20,17 +20,10 @@ class list_iterator {
     
     list_iterator(Node<T>* p, type_t t) : ptr_(p), type_(t) { }
     list_iterator(list_iterator<T> const& old) : ptr_(old.ptr_), type_(old.type_) { }
-    ~list_iterator() { }
-
-    // functions used in constructors to pass the correct enum type
-    /*
-    static type_t random() { return random_; }
-    static type_t chrono() { return chrono_; }
-    static type_t sorted() { return sorted_; }
-    */
-
+    ~list_iterator() {
+ }
     list_iterator<T> & operator=(const list_iterator<T> & old) { 
-      ptr_ = old.ptr_;  return *this; }
+      ptr_ = old.ptr_;  type_ = old.type_; return *this; }
 
     // dereferencing operator gives access to the value at the pointer
     T& operator*()  { return ptr_->value_;  }
@@ -39,7 +32,7 @@ class list_iterator {
     list_iterator<T> & operator++() { // ++iterator
       if (type_ == chrono_)
         ptr_ = ptr_->chrono_next_; 
-      else if (type_ == random_)
+      else if (type_ == sorted_)
         ptr_ = ptr_->sorted_next_;
       else // type == random
         ptr_ = ptr_->random_next_;
@@ -53,7 +46,7 @@ class list_iterator {
 
       if (type_ == chrono_)
         ptr_ = ptr_->chrono_next_; 
-      else if (type_ == random_)
+      else if (type_ == sorted_)
         ptr_ = ptr_->sorted_next_;
       else // type == random
         ptr_ = ptr_->random_next_;

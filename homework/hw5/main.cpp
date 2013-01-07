@@ -44,14 +44,14 @@ int main() {
   std::list<std::string> songs;
   songs.push_back("hound dog");
   songs.push_back("poker face");
-  songs.push_back("brown eyed girl");
-  songs.push_back("let it be");
+   songs.push_back("brown eyed girl");
+   /* songs.push_back("let it be");
   songs.push_back("walk like an egyptian");
   songs.push_back("man in the mirror");
   songs.push_back("stairway to heaven");
   songs.push_back("dancing in the street");
   songs.push_back("every breath you take");
-  songs.push_back("hotel california");
+  songs.push_back("hotel california");*/
   // the same data, sorted!
   std::list<std::string> sorted_songs(songs);
   sorted_songs.sort();

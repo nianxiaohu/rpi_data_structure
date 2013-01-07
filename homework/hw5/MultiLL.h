@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <cstdlib>
-
+#include <string>
 #include "Node.h"
 #include "list_iterator.h"
 
@@ -141,12 +141,12 @@ void MultiLL<T>::add(const T &value) {
     ++size_;
     return;
   } else {
+    ++size_;
     // arranage the chrono pointer for the new node
     chrono_tail_->chrono_next_ = node;
     node->chrono_prev_ = chrono_tail_;
     chrono_tail_ = node;
 
-    
     // arrange sorted pointers for the new node
     Node<T>* temp = sorted_tail_;
     while ( temp != sorted_head_ ) {
@@ -157,7 +157,6 @@ void MultiLL<T>::add(const T &value) {
 	      node->sorted_prev_ = sorted_tail_;
 	      sorted_tail_ = node;
 	      return;
-
 	    } else {
 	      // insert the new node at the middle of sorted list
 	      Node<T>* temp2 = temp->sorted_next_;
@@ -166,10 +165,8 @@ void MultiLL<T>::add(const T &value) {
 	      node->sorted_next_ = temp2;
 	      temp2->sorted_prev_ = node;
 	      return;
-
 	    }
       }
-
       temp = temp->sorted_prev_;
     }
 
@@ -181,7 +178,7 @@ void MultiLL<T>::add(const T &value) {
       sorted_head_ = node;
       return;
     } else { // value >= sorted_header->value_
-      if (size_ == 1) {
+      if (size_ == 2) {
 	sorted_head_ -> sorted_next_ = node;
 	node-> sorted_prev_ = sorted_head_;
 	sorted_tail_ = node;
