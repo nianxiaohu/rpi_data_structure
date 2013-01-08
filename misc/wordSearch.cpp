@@ -34,17 +34,28 @@ bool operator== (const loc& lhs, const loc& rhs) {
 bool search_from_loc(loc position, const vector<string>& board, const string& word, vector<loc>& path);
 // Read in the letter grid, the words to search and print the results
 int main(int argc, char* argv[]) {
-  if (argc != 2) {
-    cerr << "Usage: " << argv[0] << " grid-file\n";
+  if (argc != 3) {
+    cerr << "Usage: " << argv[0]  << " Column#" << " Row#"<< endl;
     return 1;
   }
-  ifstream istr(argv[1]);
-  if (!istr) {
-    cerr << "Couldn’t open " << argv[1] << ’\n’;
-    return 1;
+  int column = 0;
+  int row = 0;
+  column = atoi(argv[1]);
+  row = atoi(argv[2]);
+
+
+  //  bool ** board;
+ /* board = new bool*[column];
+  for ( unsigned int i=0; i<column;i++) {
+    board[i] = new bool[row];
+    for ( unsigned int j=0; j<row; j++ ) {
+      board[i][j] = false;
+    }
   }
-  vector<string> board;
-  string word;
+*/
+  int number_path =0;// save the number of path from the start to end
+  findPath(column,row,number_path);
+
   vector<loc> path;
   string line;
   //The sequence of locations...
@@ -54,11 +65,14 @@ int main(int argc, char* argv[]) {
   while (istr >> word) {
     bool found = false;
     vector<loc> path; 
+
+
     /* Path of locations in finding the word
        Check all grid locations. For any that have the first
        letter of the word, call the function search_from_loc
        to check if the rest of the word is there.
     */
+
     for (unsigned int r=0; r<board.size() && !found; ++r)
       for (unsigned int c=0; c<board[r].size() && !found; ++c) {
 	if (board[r][c] == word[0] &&
