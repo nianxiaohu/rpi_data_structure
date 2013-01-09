@@ -2,9 +2,19 @@
 #include<cassert>
 #include <stdio.h>
 #include <stdlib.h>
+/*
+Author: Xiaohu Nian
+The main part of algorithm is the recursively finding the 
+number of path from each neighbor to the target point
+path(a,b) = path(a.left,b) +path(a.right,b) +
+path(a.up,b)+ path(a.down,b)// as for the detail, we need to check each point's validity
+The annoying part is to find the basic case of recursive alogrithm, which consumed the majority of the time.
+I used leftover argument to track how many points left to travel.
+It is very fruitful and fun.
+ */
 using namespace std;
 
-
+// loc class to save location
 class loc {
 public:
   loc(int r=0, int c=0) : x(r), y(c) {}
@@ -23,8 +33,7 @@ int main(int argc, char* argv[]) {
   int row = 0;
   column = atoi(argv[1]); 
   row = atoi(argv[2]);
-  // int column = 10;
-  // int row = 4;
+  // dynamically allocate the board and set every location to 0 expect the  starting point ( which is 1)
   int** board = new int*[column];
   for ( unsigned int i=0; i<column;i++) {
     board[i] = new int[row];
@@ -40,11 +49,17 @@ int main(int argc, char* argv[]) {
 
 int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOver )
 {
-  // assert ( leftOver >=1 );
+  // for each location l2 , we need to its four neighbors
+  // not all neighbors are in the boundary
+  // if the  valid neighbor is just the final target location and the number of points left to explore is one
+  // then this is the right path, set path number = 1
+  // otherwise if the location is just he final target location whereas there are more than one points left to explore, 
+  // then that means it is deadend of some path = 0
+  // else recursively call the numberPath using the new location, new leftOver points to explore and set the new location to 1 in the board to denote
+  // it is already explored
+ 
   if ( leftOver < 0)
     cout << "Wrong here" << endl;
-  // if ( l1 == l2 && leftOver == 1 )
-  //   return 1;
   int up,down,left,right;
   int path_up =0;
   int path_down =0;
@@ -54,7 +69,8 @@ int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOv
   down = l2.y +1;
   left = l2.x -1;
   right = l2.x + 1;
-  if (up >= 0) {
+  
+  if (up >= 0) {// check up is not out of bound
     if (loc(l2.x,up) == l1 && leftOver == 1 ) {
       path_up = 1;
     }

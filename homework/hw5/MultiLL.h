@@ -3,10 +3,12 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 #include "Node.h"
 #include "list_iterator.h"
-
+#include "MersenneTwister.h"
+using namespace std;
 template <class T>
 class MultiLL {
   public:
@@ -25,7 +27,7 @@ class MultiLL {
     // iterator insert(iterator itr, T const& v);
     iterator begin_chronological() { return iterator( chrono_head_, chrono_ ); }
     iterator begin_sorted() { return iterator( sorted_head_, sorted_ ); }
-    iterator begin_random() { return iterator( random_head_, random_ ); }
+    iterator begin_random();// { return iterator( random_head_, random_ ); }
     iterator end_chronological() { return iterator(chrono_); }
     iterator end_sorted() { return iterator(sorted_); }
 
@@ -60,7 +62,54 @@ MultiLL<T>& MultiLL<T>::operator= (const MultiLL<T>& old) {
   }
   return *this;
 }
-
+template <class T>
+typename MultiLL<T>::iterator MultiLL<T>::begin_random() {
+  // use MersenneTwister to create a random number
+  assert(size_ > 0);
+  if ( size_ == 0 )
+    return iterator(random_);
+  // there is only one element in the list
+  if ( size_ == 1) {
+    random_head_ = chrono_head_;
+    random_head_ -> random_next_ = random_head_;
+  } else {
+    // there are more than one elements in the list
+    
+    // set up the random_head_ 
+    MTRand random_number;
+    unsigned int i =  random_number.randInt(size_);
+    cout << i<<endl;
+    int j = 0;
+    int leftOver = size_;
+    Node<T>* temp = chrono_head_;
+    i--;
+    while ( j < i ) {
+      temp = temp->chrono_next_;
+    }
+    random_head_ = temp;
+    --leftOver;
+    Node<T>* current = random_head_;
+    for ( unsigned int i = 0; i < size_-1 ; i++ , leftOver-- ) {
+      MTRand random_number;
+      unsigned int index =  random_number.randInt(leftOver);
+      // find the right pointer to the node
+      iterator itr(chrono_head_, chrono_);
+      unsigned int g = 0;
+      while ( g < index ) {
+	if ( itr.ptr_->random_next_ == NULL ) {
+	  g++;
+	}
+	else {
+	  ;
+	}
+	++itr;
+      }
+      current->random_next_ = itr.ptr_;
+      current = itr.ptr_;
+    }
+    current->random_next_ = random_head_;
+  }
+}
 
 template <class T> 
 typename MultiLL<T>::iterator MultiLL<T>::erase(iterator itr) {
@@ -103,7 +152,7 @@ typename MultiLL<T>::iterator MultiLL<T>::erase(iterator itr) {
       itr.ptr_ -> sorted_next_ -> sorted_prev_ = itr.ptr_ -> sorted_prev_;
     }
   }
-
+  
   // Take care of the random
   if (itr.ptr_ == random_head_) {
     random_head_ = random_head_ -> random_next_;
@@ -124,7 +173,7 @@ typename MultiLL<T>::iterator MultiLL<T>::erase(iterator itr) {
     for ( ; next != itr.ptr_; present = next, next = next->random_next_)
       ; // ride along until you get one before the node you want to remove
     present->random_next_ = next->random_next_;
-  }
+  } 
   delete itr.ptr_;
   return temp;
 }
@@ -137,7 +186,6 @@ void MultiLL<T>::add(const T &value) {
     chrono_tail_ = node;
     sorted_head_ = node;
     sorted_tail_ = node;
-    random_head_ = node;
     ++size_;
     return;
   } else {
@@ -194,23 +242,6 @@ void MultiLL<T>::add(const T &value) {
     }
   }
 }
-
-/*
-// insert BEFORE the node indicated by the iterator and return an iterator to the new node
-template <class T> 
-typename MultiLL<T>::iterator MultiLL<T>::insert(iterator itr, T const& v) {
-  ++size_ ;
-  Node<T>* p = new Node<T>(v);
-  p -> prev_ = itr.ptr_ -> prev_;
-  p -> next_ = itr.ptr_;
-  itr.ptr_ -> prev_ = p;
-  if (itr.ptr_ == head_)
-    head_ = p;
-  else
-    p -> prev_ -> next_ = p;
-  return iterator(p);
-}
-*/
 
 template <class T> 
 void MultiLL<T>::copy_list(MultiLL<T> const & old) {
