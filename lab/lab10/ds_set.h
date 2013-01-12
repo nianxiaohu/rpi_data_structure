@@ -98,7 +98,6 @@ private:
     if ( !old_root ) 
       return NULL;
     TreeNode<T>* newNode = new TreeNode<T>( old_root->value );
-    size_++;
     newNode->left = copy_tree( old_root->left );
     newNode->right = copy_tree( old_root->right );
     return newNode;
