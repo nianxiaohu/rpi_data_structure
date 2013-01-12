@@ -1,0 +1,17 @@
+board 3 6
+num_steps 8
+num_robots 1
+
+robot A 
+start 0 0 north
+goal 2 5
+forward_1
+forward_2
+forward_3
+backward_1
+rotate_right
+rotate_left
+u_turn
+do_nothing
+
+

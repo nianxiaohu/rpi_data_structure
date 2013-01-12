@@ -1,0 +1,53 @@
+board 3 5
+num_steps 6
+num_robots 5
+
+robot A 
+start 0 0 east
+goal 2 0
+forward_1
+forward_1
+forward_1
+forward_1
+u_turn
+u_turn
+
+robot B 
+start 0 1 east
+goal 2 3
+forward_1
+forward_1
+forward_1
+forward_1
+rotate_left
+rotate_right
+
+robot C 
+start 0 2 east
+goal 2 2
+forward_1
+forward_1
+u_turn
+u_turn
+u_turn
+u_turn
+
+robot D 
+start 0 3 east
+goal 2 1
+forward_1
+forward_1
+forward_1
+forward_1
+rotate_left
+rotate_right
+
+robot E 
+start 0 4 east
+goal 2 4
+forward_1
+forward_1
+forward_1
+forward_1
+u_turn
+u_turn
