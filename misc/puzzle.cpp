@@ -11,6 +11,11 @@ path(a.up,b)+ path(a.down,b)// as for the detail, we need to check each point's 
 The annoying part is to find the basic case of recursive alogrithm, which consumed the majority of the time.
 I used leftover argument to track how many points left to travel.
 It is very fruitful and fun.
+/* second try 
+in stead of manually maintain the board for each valid recursive call, all you need to do is to rely on the stack structure 
+of computing. However, you need to change whatever you change before the recursive call back to original setting, so after the recursive call
+returns, you haven't interfere other neighbors's setting.
+It is really smart and extremely fast
  */
 using namespace std;
 
@@ -57,7 +62,7 @@ int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOv
   // then that means it is deadend of some path = 0
   // else recursively call the numberPath using the new location, new leftOver points to explore and set the new location to 1 in the board to denote
   // it is already explored
- 
+  // 
   if ( leftOver < 0)
     cout << "Wrong here" << endl;
   int up,down,left,right;
@@ -72,53 +77,32 @@ int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOv
   
   if (up >= 0) {// check up is not out of bound
     if (loc(l2.x,up) == l1 && leftOver == 1 ) {
-      path_up = 1;
+      path_up = 1;// if path_up works, then means other paths(down,left,right) are definitely not working so do not check other steps, just returns
+      // before return you should mark this l2 as unvisited, since we come back to the calling stack before this stack.
     }
     else if (loc(l2.x,up) == l1 && leftOver > 1) {
       path_up = 0; 
     } else {  if (board[l2.x][up] == 0) {
-	int**  board1 = new int*[bound2];
-	for ( unsigned int i=0; i<bound2;i++) {
-	  board1[i] = new int[bound1];
-	  for ( unsigned int j=0; j<bound1; j++ ) {
-	    board1[i][j] = board[i][j];
-	  }
-	}
-	board1[l2.x][up] = 1;
-	path_up = numberPath(l1, loc(l2.x,up), board1, bound1, bound2, leftOver-1);
-      for ( unsigned int i=0; i<bound2;i++) { 
-	delete [] board1[i];
+	board[l2.x][up] = 1;
+	path_up = numberPath(l1, loc(l2.x,up), board, bound1, bound2, leftOver-1);
+	board[l2.x][up] = 0;
       }
-      delete [] board1;
-    }
     }
   }
-  
   if (down < bound1 ) {
     if (loc(l2.x,down) == l1 && leftOver == 1 ) {
       path_down = 1;
     }
     else if ( loc(l2.x,down) == l1 && leftOver > 1) {
       path_down = 0;}
-    else{
-    if (board[l2.x][down] == 0) {
-      int**  board1 = new int*[bound2];
-      for ( unsigned int i=0; i<bound2;i++) {
-	board1[i] = new int[bound1];
-	for ( unsigned int j=0; j<bound1; j++ ) {
-	  board1[i][j] = board[i][j];
-	}
+    else{ if (board[l2.x][down] == 0) {
+      board[l2.x][down] = 1;
+      path_down = numberPath(l1, loc(l2.x,down), board, bound1, bound2, leftOver-1);
+      board[l2.x][down] = 0;
       }
-      board1[l2.x][down] = 1;
-      path_down = numberPath(l1, loc(l2.x,down), board1, bound1, bound2, leftOver-1);
-      for ( unsigned int i=0; i<bound2;i++) { 
-	delete [] board1[i];
-      }
-      delete [] board1;
-    }
     }
   }
-  
+
   
  if (left >=0 ) {
    if (loc(left,l2.y) == l1 && leftOver == 1 ) {
@@ -126,24 +110,14 @@ int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOv
    }
    else {if (loc(left,l2.y) == l1 && leftOver > 1) {
      ;}
-   else  if (board[left][l2.y] == 0) {
-     int**  board1 = new int*[bound2];
-     for ( unsigned int i=0; i<bound2;i++) {
-       board1[i] = new int[bound1];
-       for ( unsigned int j=0; j<bound1; j++ ) {
-	  board1[i][j] = board[i][j];
-       }
+     else  if (board[left][l2.y] == 0) {
+       board[left][l2.y] = 1;
+       path_left = numberPath(l1, loc(left,l2.y), board, bound1, bound2, leftOver-1);
+       board[left][l2.y] = 0;
      }
-     board1[left][l2.y] = 1;
-     path_left = numberPath(l1, loc(left,l2.y), board1, bound1, bound2, leftOver-1);
-     for ( unsigned int i=0; i<bound2;i++) { 
-       delete [] board1[i];
-     }
-     delete [] board1;
-   }
    }
  }
-
+ 
  
  if (right < bound2 ) {
    if (loc(right,l2.y) == l1 && leftOver == 1) {
@@ -152,21 +126,12 @@ int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOv
    else { if ( loc(right,l2.y) == l1 && leftOver > 1) {
      path_right = 0;
    } else  if (board[right][l2.y] == 0) {
-     int**  board1 = new int*[bound2];
-      for ( unsigned int i=0; i<bound2;i++) {
-	board1[i] = new int[bound1];
-	for ( unsigned int j=0; j<bound1; j++ ) {
-	  board1[i][j] = board[i][j];
-	}
-      }
-      board1[right][l2.y] = 1;
-      path_right = numberPath(l1, loc(right,l2.y), board1, bound1, bound2, leftOver-1);
-      for ( unsigned int i=0; i<bound2;i++) { 
-	delete [] board1[i];
-      }
-      delete [] board1;
+      board[right][l2.y] = 1;
+      path_right = numberPath(l1, loc(right,l2.y), board, bound1, bound2, leftOver-1);
+      board[right][l2.y] = 0;
     }
    }
  }
+ board[l2.x][l2.y] = 0;
  return path_up+path_down+path_left+path_right;
 }
