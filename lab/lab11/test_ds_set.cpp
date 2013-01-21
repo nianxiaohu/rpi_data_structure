@@ -4,7 +4,7 @@
 #include <cassert>
 
 #include "ds_set.h"
-
+using namespace std;
 int main() {
 
   ds_set<std::string> set1;
@@ -16,7 +16,9 @@ int main() {
   set1.insert("zebra");
   set1.insert("daddy");
   set1.insert("puppy");  // should recognize that this is a duplicate!
-
+  string str = "";
+  set1.accumulate(str);
+  cout << str <<endl;
   assert(set1.sanity_check());
   assert (set1.size() == 7);
 
@@ -73,16 +75,25 @@ int main() {
 
 
   // Test the iterators!
-
-
-
-
-
-
-
-
-
-
+  ds_set<int> set3;
+  int a[] ={8,4,12,2,6,10,14,1,3,5,7,9,11,13,15};// this insertion will create a balanced tree 
+  for ( int i=0; i<15;i++ ) {
+    set3.insert(a[i]);
+  }
+  assert(set3.size() == 15);
+  assert(*(set3.begin()) == 1);
+  ds_set<int>::iterator itr = ++(set3.begin()); // increase before the assignment 
+  assert(*itr == 2);
+  set3.erase(1);
+  assert( *(set3.begin()) == 2);
+  set3.insert(1);
+  set3.print_as_sideways_tree( std::cout );
+  ds_set<int>::iterator it = set3.end();
+  --it;
+  assert( *it == 15 );
+  int initial = 0;
+  set3.accumulate(initial);
+  cout << initial << endl;
 
 
 

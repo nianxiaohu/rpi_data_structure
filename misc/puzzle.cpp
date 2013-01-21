@@ -132,6 +132,6 @@ int numberPath( loc l1, loc l2, int** &board, int bound1, int bound2, int leftOv
     }
    }
  }
- board[l2.x][l2.y] = 0;
+ //board[l2.x][l2.y] = 0;
  return path_up+path_down+path_left+path_right;
 }

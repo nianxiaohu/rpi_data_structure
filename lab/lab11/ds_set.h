@@ -24,11 +24,12 @@ template <class T> class ds_set;
 template <class T>
 class tree_iterator {
 public:
-  tree_iterator() : ptr_(NULL), set_(NULL) {}
-  tree_iterator(TreeNode<T>* p, const ds_set<T> * s) : ptr_(p), set_(s) {}
+ tree_iterator() : ptr_(NULL), set_(NULL),at_the_end(false) {}
+  // tree_iterator(TreeNode<T>* p, const ds_set<T> * s) : ptr_(p), set_(s), at_the_end(false) {}
+ tree_iterator(TreeNode<T>* p, const ds_set<T> * s, bool at=false) : ptr_(p), set_(s), at_the_end(at) {}  // when you call this constructor without third argument, it will automatically replace at with false...  so this constructor allows two and three arguments
   tree_iterator(const tree_iterator& old) : ptr_(old.ptr_), set_(old.set_) {}
   ~tree_iterator() {}
-  tree_iterator& operator=(const tree_iterator& old) { ptr_ = old.ptr_;  set_ = old.set_; return *this; }
+  tree_iterator& operator=(const tree_iterator& old) { ptr_ = old.ptr_;  set_ = old.set_; at_the_end = old.at_the_end; return *this; }
   // operator* gives constant access to the value at the pointer
   const T& operator*() const { return ptr_->value; }
   // comparions operators are straightforward
@@ -54,15 +55,21 @@ public:
     return temp;
   }
   tree_iterator<T> & operator--() { 
-
-
-
-
-    // you must write this function
-
-
-
-
+     if ( at_the_end) {
+      ptr_= set_->root_;
+      if ( ptr_) {
+	while( ptr_->right ) { ptr_= ptr_->right; }
+	at_the_end = false;
+      }
+      return *this;
+     }
+    if ( ptr_->left != NULL) { // find the rightmost child of the left node
+      ptr_ = ptr_->left;
+      while( ptr_->right != NULL) { ptr_ = ptr_->right;}
+    } else { // go upwards along left branches.. stop after the first right
+      while(ptr_->parent != NULL && ptr_->parent->left == ptr_) { ptr_ = ptr_->parent;}
+      ptr_= ptr_->parent;
+    }
     return *this;
   }
   tree_iterator<T> operator--(int) {
@@ -75,6 +82,7 @@ private:
   // representation
   TreeNode<T>* ptr_;
   const ds_set<T>* set_;
+  bool at_the_end;
 };
 
 // -------------------------------------------------------------------
@@ -125,7 +133,7 @@ public:
     while (p->left) p = p->left;
     return iterator(p,this);
   }
-  iterator end() const { return iterator(NULL,this); }
+  iterator end() const { return iterator(NULL,this,true); }
 
   bool sanity_check() const {
     if (root_ == NULL) return true;
@@ -134,6 +142,10 @@ public:
     }
     return sanity_check(root_);
   }
+  void accumulate(T & initial) {
+    for (iterator it = this->begin(); it != this->end(); it++)
+      initial += *it;
+  } 
 
 private:
   // REPRESENTATION
@@ -251,9 +263,6 @@ private:
     }
     return sanity_check(p->left) && sanity_check(p->right);
   }
-
-
-
 };
 
 #endif

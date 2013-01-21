@@ -12,11 +12,16 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <stdio.h>
+#include <stdlib.h>
+#include <cassert>
+#include "word_frequency.h"
+#include "MersenneTwister.h"
 
-
+using namespace std;
 
 // ASSIGNMENT: FILL IN YOUR OWN MAP STRUCTURE
-typedef std::map<std::string,std::map<std::string,int> > MY_MAP; // windows 2
+typedef WordFrequency* MY_MAP;
 
 
 
@@ -110,30 +115,33 @@ void LoadSampleText(MY_MAP &data, const std::string &filename, int window, const
   //
   // ASSIGNMENT:SETUP YOUR MAP DATA AS NEEDED
   //
-
-  while (ReadNextWord(istr,word)) {
-    // skip the quotation marks (not used for this part)
-    if (word == "\"") continue;
-
-
-    //
-
-    // ASSIGNMENT: PROCESS ALL THE NON PUNCTUATION WORDS
-    // INSERTING THESE WORDS INTO THE DATA STRUCTURE
-    //
-
-
+  std::list<std::string> frame;
+  data = new WordFrequency(window);
+  std::string word;
+  while(ReadNextWord(istr,word)){
+    if (word=="\"") continue;
+    //PROCESS ALL THE NON PUNCTUATION WORDS
+    //INSERTING THESE WORDS INTO THE DATA STRUCTURE
+    data->IncrWord(word);
+    frame.push_back(word);
+    if ( (int)frame.size() > window ) frame.pop_front();
+    std::list<std::string>::iterator i = frame.begin();
+    std::list<std::string>::iterator j = i; j++;
+    WordFrequency *tmp = data;
+    while( j!= frame.end() ) {
+      tmp = tmp->GetWord(*i);
+      if ( tmp != NULL) {
+	assert(tmp != NULL);
+	tmp->IncrWord(*j);
+      }
+      i++;
+      j++;
+    }
   }
-
 }
-
-
-
-int main () {
-
+int main () { 
   // ASSIGNMENT: THE MAIN DATA STRUCTURE
   MY_MAP data;
-
   // Parse each command
   std::string command;    
   while (std::cin >> command) {
@@ -156,13 +164,10 @@ int main () {
     // next word given a particular sequence.
     else if (command == "print") {
       std::vector<std::string> sentence = ReadQuotedWords(std::cin);
-
-
       //
       // ASSIGNMENT: ADD YOUR COMMANDS HERE
       //
-
-
+      data->PrintFrequency(sentence);
     }
 
     // generate the specified number of words 
@@ -185,7 +190,16 @@ int main () {
       //
       // ASSIGNMENT: ADD YOUR COMMANDS HERE
       //
-
+      std::pair<std::string,float> answer;
+      for ( int i=0;i<length;i++) {
+	answer = data->NextWord(sentence,random_flag);
+	sentence.push_back(answer.first);
+      }
+      for ( unsigned int i = 0; i<sentence.size();i++) {
+	if ( i>0) std::cout << " ";
+	std::cout << sentence[i];
+      }
+      std::cout << "\n" << std::endl;
 
     } else if (command == "quit") {
       break;

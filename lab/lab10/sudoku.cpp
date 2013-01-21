@@ -21,7 +21,6 @@ int main() {
   while (cin >> size) {
     // Read in the board size and create an empty board
     Sudoku board(size);
-
     // Read in and set the known positions in the board
     char c;
     for (int i = 0; i < size; i++) {
@@ -32,7 +31,7 @@ int main() {
         }
       }
     }
-    
+   
     // The iterative solving routine 
     while (1) {
       
@@ -78,11 +77,14 @@ Sudoku::Sudoku(int s) {
   size = s;
   quadrant_size = (int)sqrt(size);
   assert (quadrant_size*quadrant_size == s);
-
-  
+  std::vector<int> k;
+  for ( int i = 1; i<=size; i++ )
+    k.push_back(i);
+  board = std::vector<std::vector<std::set<int> > >( size, std::vector<std::set<int> > ( size, std::set<int>(k.begin(),k.end()) )); 
+  for (set<int>::iterator itr = board[1][1].begin(); itr != board[1][1].end(); itr++) {
+    cout << *itr << endl;
+  }
   // You need to finish this function!
-
-
 }
 
 // To construct the puzzle, set the value of a particular cell
@@ -103,8 +105,13 @@ bool Sudoku::IsSolved() const {
 
 
   // You need to write this function
-
-
+ for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      if ( !KnownValue(i,j) )
+	return false;
+    }
+ }
+ return true;
 }
 
 // If there are no legal choices in one or more cells of the grid, the puzzle is impossible
@@ -143,10 +150,26 @@ void Sudoku::Print() const {
 // Propagate information from this cell along columns & diagonals &
 // within quadrant. Return the number of cells that changed.
 int Sudoku::Propagate(int i, int j) {
-
-
   // You need to write this function
-
+  // for each position, propagate along the row, just remove the only element in position i,j from other sets in the same row 
+  for ( int k = 0; k<size; k++ ) {
+    if ( k == i) ;
+    else board[k][j].erase(*(board[i][j].begin()));
+  }
+  // for each position, propagate along the column
+  for ( int k = 0; k<size; k++ ) {
+    if ( k == j) ;
+    else board[i][j].erase(*(board[i][j].begin()));
+  }
+  // for each position, propagate within the quadrant
+  // find the right square
+  int a = i/quadrant_size;
+  int b = j/quadrant_size;
+  for ( int c = a*quadrant_size; c< (a+1)*quadrant_size; c++) {
+    for ( int d = b*quadrant_size; d <(b+1)*quadrant_size; d++) {
+      if ( c==i && d ==j) continue;
+      board[c][d].erase(*(board[i][j].begin()));
+    }
+  }
   return 0;
-
 }
